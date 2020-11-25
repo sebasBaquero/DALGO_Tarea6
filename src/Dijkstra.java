@@ -6,29 +6,29 @@ import java.util.Arrays;
 
 
 public class Dijkstra {
-	public static int[][] r = new int[5][5];
-
+	
+	public static ArrayList < ArrayList <Integer> > grafo = new ArrayList< ArrayList <Integer> >();
 	//public static void main(String[]args) {
-		//int[][] grafo = crearGrafo();
-		//int numeroVertices = grafo.length;
-		//for(int i = 0; i < numeroVertices; i++) {
-			//int[] filaR = dijkstra(grafo,i);
-			//insertFila(filaR,i,r);
-		//}
+	//int[][] grafo = crearGrafo();
+	//int numeroVertices = grafo.length;
+	//for(int i = 0; i < numeroVertices; i++) {
+	//int[] filaR = dijkstra(grafo,i);
+	//insertFila(filaR,i,r);
+	//}
 
-		//System.out.println(Arrays.deepToString(r));
+	//System.out.println(Arrays.deepToString(r));
 
 	//}
-	
+
 	public static void main(String[] args) throws Exception 
 	{
 		//lectura de datos adaptada del taller de ordenamiento del curso Diseño y análisis de algoritmos
 		String file_name = args[0];	
 		//String file_name = "distances.txt";
-		ArrayList < ArrayList <Integer> > grafo = new ArrayList< ArrayList <Integer> >();
-		
+		grafo = new ArrayList< ArrayList <Integer> >();
+
 		try (FileReader reader = new FileReader(file_name);
-			BufferedReader in = new BufferedReader(reader)) 
+				BufferedReader in = new BufferedReader(reader)) 
 		{ 
 			String line = in.readLine();
 			while(line != null) 
@@ -53,17 +53,39 @@ public class Dijkstra {
 				line = in.readLine();
 			}
 		}
+		System.out.print("---- Este es el grafo seleccionado ----");
+		System.out.print("\n");
 		for(int i = 0; i < grafo.size(); i++)
 		{
 			for(int j = 0; j < grafo.get(i).size(); j++) 
 				System.out.print(grafo.get(i).get(j) + " - ");
 			System.out.print("\n");
 		}
-	}
+		int numVertices = grafo.size();
+		long startTime = System.nanoTime();
+		int[][] r = new int[grafo.size()][grafo.get(0).size()];
+		
+		for(int f = 0; f < numVertices; f++) {
+			int[] filaR = dijkstra(grafo,f);
+			insertFila(filaR,f,r);
+		}
+		long endTime = System.nanoTime();
+		long seDemoro = endTime - startTime;
 	
+		System.out.print("---- Este es la matriz de distancias minima usando Dijkstra ----");
+		System.out.print("\n");
+		for(int i = 0; i < r.length; i++)
+		{
+			for(int j = 0; j < r[i].length; j++) 
+				System.out.print(r[i][j] + " - ");
+			System.out.print("\n");
+		}
+		System.out.print("Se demoro: "+ seDemoro + " nanosegundos" );
+	}
 
-	public static int[] dijkstra(int[][] grafo,int indiceInicio) {
-		int numeroVertices = grafo.length ;
+
+	public static int[] dijkstra(ArrayList < ArrayList <Integer> > grafo,int indiceInicio) {
+		int numeroVertices = grafo.size() ;
 		int max = Integer.MAX_VALUE; 
 		int[] a = new int[numeroVertices];
 		boolean[] b = new boolean[numeroVertices];
@@ -79,8 +101,8 @@ public class Dijkstra {
 			seleccionados[indiceMin] = true;
 
 			for(int j = 0; j < numeroVertices; j++) {
-				if(grafo[indiceMin][j] != 0 && grafo[indiceMin][j] != -1 && seleccionados[j] == false && distanciasMinimas[indiceMin] != max && (distanciasMinimas[indiceMin] + grafo[indiceMin][j] < distanciasMinimas[j])) {
-					distanciasMinimas[j] = distanciasMinimas[indiceMin] + grafo[indiceMin][j];
+				if(grafo.get(indiceMin).get(j) != 0 && grafo.get(indiceMin).get(j) != -1 && seleccionados[j] == false && distanciasMinimas[indiceMin] != max && (distanciasMinimas[indiceMin] + grafo.get(indiceMin).get(j) < distanciasMinimas[j])) {
+					distanciasMinimas[j] = distanciasMinimas[indiceMin] + grafo.get(indiceMin).get(j);
 					parent[j] = indiceMin;
 				}
 			}
