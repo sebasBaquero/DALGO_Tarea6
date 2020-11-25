@@ -75,6 +75,8 @@ public class Floyd_Warshall {
 			System.out.print("\n");
 		}
 		System.out.print("Se demoro: "+ seDemoro + " nanosegundos" );
+		System.out.print("\n");
+		System.out.print("Se demoro: "+ seDemoro/1000000 + " milisegundos" );
 	}
 
 

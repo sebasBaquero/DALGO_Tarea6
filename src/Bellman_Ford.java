@@ -1,20 +1,92 @@
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
 public class Bellman_Ford {
-	public static int[][] re = new int[5][5];
+	public static ArrayList < ArrayList <Integer> > grafo = new ArrayList< ArrayList <Integer> >();
 	
-	public static void main(String[]args) {
-		Grafo g = inicGrafo();
-		int[] r = bellmanFord(g,0);
-		for(int i = 0; i < g.V; i++) {
-			int[] filaR = bellmanFord(g,i);
-			insertFila(filaR,i,re);
-		}
-		System.out.println(Arrays.deepToString(re));
+	//public static void main(String[]args) {
+		//Grafo g = inicGrafo();
+		//int[] r = bellmanFord(g,0);
+		//for(int i = 0; i < g.V; i++) {
+			//int[] filaR = bellmanFord(g,i);
+			//insertFila(filaR,i,re);
+		//}
+		//System.out.println(Arrays.deepToString(re));
 
+	//}
+	
+	public static void main(String[] args) throws Exception 
+	{
+		//lectura de datos adaptada del taller de ordenamiento del curso Diseño y análisis de algoritmos
+		String file_name = args[0];	
+		//String file_name = "distances.txt";
+		grafo = new ArrayList< ArrayList <Integer> >();
+
+		try (FileReader reader = new FileReader(file_name);
+				BufferedReader in = new BufferedReader(reader)) 
+		{ 
+			String line = in.readLine();
+			while(line != null) 
+			{
+				try 
+				{
+					ArrayList <Integer> adyacencias = new ArrayList <Integer>();
+					String[] array = line.split("	");
+					for(int j = 0; j < array.length; j++)
+					{
+						array[j] = array[j].trim();
+						int a = Integer.parseInt(array[j]);
+						adyacencias.add( a );
+					}
+					grafo.add(adyacencias);
+				} 
+				catch (Exception e) 
+				{
+					System.err.println("Can not read number from content: "+line);
+					e.printStackTrace();
+				}
+				line = in.readLine();
+			}
+		}
+		System.out.print("---- Este es el grafo seleccionado ----");
+		System.out.print("\n");
+		for(int i = 0; i < grafo.size(); i++)
+		{
+			for(int j = 0; j < grafo.get(i).size(); j++) 
+				System.out.print(grafo.get(i).get(j) + " - ");
+			System.out.print("\n");
+		}
+		int numVertices = grafo.size();
+		long startTime = System.nanoTime();
+		int[][] r = new int[grafo.size()][grafo.get(0).size()];
+		
+		// Pasamos el grafo a tipo Grafo
+		Grafo s = inicGrafo(grafo);
+		
+		for(int f = 0; f < numVertices; f++) {
+			int[] filaR = bellmanFord(s,f);
+			insertFila(filaR,f,r);
+		}
+		long endTime = System.nanoTime();
+		long seDemoro = endTime - startTime;
+	
+		System.out.print("---- Este es la matriz de distancias minima usando Bellman Ford ----");
+		System.out.print("\n");
+		for(int i = 0; i < r.length; i++)
+		{
+			for(int j = 0; j < r[i].length; j++) 
+				System.out.print(r[i][j] + " - ");
+			System.out.print("\n");
+		}
+		System.out.print("Se demoro: "+ seDemoro + " nanosegundos" );
+		System.out.print("\n");
+		System.out.print("Se demoro: "+ seDemoro/1000000 + " milisegundos" );
 	}
+
 
 	public static int[] bellmanFord(Grafo g,int fuente) {
 
@@ -91,20 +163,20 @@ public class Bellman_Ford {
 		return grafo;	
 	}
 	
-	public static Grafo inicGrafo() {
+	public static Grafo inicGrafo(ArrayList < ArrayList <Integer> > g) {
 		
-		int[][] g = crearGrafo();
+		
 		int a = contarArcos(g);
-		int v = g.length;
+		int v = g.size();
 		Grafo grafo = new Grafo(v,a);
 		int count  = 0;
 		
 		for(int i = 0; i < v; i++) {
 			for(int j = 0; j < v; j++) {
-				if(g[i][j] != -1 && g[i][j]!= 0) {
+				if(g.get(i).get(j) != -1 && g.get(i).get(j)!= 0) {
 					grafo.arcos[count].indiceFuente = i;
 					grafo.arcos[count].indiceDestino = j;
-					grafo.arcos[count].peso = g[i][j];	
+					grafo.arcos[count].peso = g.get(i).get(j);	
 					count++;	
 				}
 			}
@@ -112,11 +184,11 @@ public class Bellman_Ford {
 		return grafo;
 	}
 	
-	public static int contarArcos(int a[][]) {
+	public static int contarArcos(ArrayList < ArrayList <Integer> > a) {
 		int count = 0;
-		for(int i = 0; i < a.length;i++) {
-			for(int j = 0; j < a.length; j++) {
-				if(a[i][j] != -1 || a[i][j] != 0) {
+		for(int i = 0; i < a.size();i++) {
+			for(int j = 0; j < a.size(); j++) {
+				if(a.get(i).get(j) != -1 || a.get(i).get(j) != 0) {
 					count++;
 				}
 			}
