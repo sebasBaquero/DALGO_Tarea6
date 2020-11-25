@@ -1,21 +1,89 @@
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Floyd_Warshall {
 
-	public static void main(String[]args) {
-		int[][] grafo = crearGrafo();
-		int[][] grafoRespuesta = floyd_warshall(grafo);
-		System.out.println(Arrays.deepToString(grafoRespuesta));
+	//public static void main(String[]args) {
+	//int[][] grafo = crearGrafo();
+	//int[][] grafoRespuesta = floyd_warshall(grafo);
+	//System.out.println(Arrays.deepToString(grafoRespuesta));
 
+	//}
+	public static ArrayList < ArrayList <Integer> > grafo = new ArrayList< ArrayList <Integer> >();
+
+	public static void main(String[] args) throws Exception 
+	{
+		//lectura de datos adaptada del taller de ordenamiento del curso Diseño y análisis de algoritmos
+		String file_name = args[0];	
+		//String file_name = "distances.txt";
+		grafo = new ArrayList< ArrayList <Integer> >();
+
+		try (FileReader reader = new FileReader(file_name);
+				BufferedReader in = new BufferedReader(reader)) 
+		{ 
+			String line = in.readLine();
+			while(line != null) 
+			{
+				try 
+				{
+					ArrayList <Integer> adyacencias = new ArrayList <Integer>();
+					String[] array = line.split("	");
+					for(int j = 0; j < array.length; j++)
+					{
+						array[j] = array[j].trim();
+						int a = Integer.parseInt(array[j]);
+						adyacencias.add( a );
+					}
+					grafo.add(adyacencias);
+				} 
+				catch (Exception e) 
+				{
+					System.err.println("Can not read number from content: "+line);
+					e.printStackTrace();
+				}
+				line = in.readLine();
+			}
+		}
+		System.out.print("---- Este es el grafo seleccionado ----");
+		System.out.print("\n");
+		for(int i = 0; i < grafo.size(); i++)
+		{
+			for(int j = 0; j < grafo.get(i).size(); j++) 
+				System.out.print(grafo.get(i).get(j) + " - ");
+			System.out.print("\n");
+		}
+		
+		long startTime = System.nanoTime();
+		
+
+		
+		 int[][] r = floyd_warshall(grafo);
+			
+		
+		long endTime = System.nanoTime();
+		long seDemoro = endTime - startTime;
+
+		System.out.print("---- Este es la matriz de distancias minima usando Floyd Warshall ----");
+		System.out.print("\n");
+		for(int i = 0; i < r.length; i++)
+		{
+			for(int j = 0; j < r[i].length; j++) 
+				System.out.print(r[i][j] + " - ");
+			System.out.print("\n");
+		}
+		System.out.print("Se demoro: "+ seDemoro + " nanosegundos" );
 	}
 
-	public static int[][] floyd_warshall(int [][] grafo){
-		int numeroV = grafo.length;
+
+	public static int[][] floyd_warshall(ArrayList < ArrayList <Integer> > grafo){
+		int numeroV = grafo.size();
 		int [][]grafoSolucion = new int[numeroV][numeroV];
 		for(int g = 0; g < numeroV; g++) {
 			for(int h = 0; h < numeroV; h++) {
-				grafoSolucion[g][h] = grafo[g][h];
+				grafoSolucion[g][h] = grafo.get(g).get(h);
 			}
 		}
 
