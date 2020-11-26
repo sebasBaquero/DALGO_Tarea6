@@ -2,6 +2,10 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
 
 public class BFS
 {
@@ -39,18 +43,64 @@ public class BFS
 				line = in.readLine();
 			}
 		}
-		for(int i = 0; i < grafo.size(); i++)
-		{
-			for(int j = 0; j < grafo.get(i).size(); j++) 
-				System.out.print(grafo.get(i).get(j) + " - ");
-			System.out.print("\n");
+		
+		//conseguir e imprimir resultados
+		ArrayList < ArrayList <Integer> > respuesta = BFS(grafo);
+		
+		System.out.print("\n{ ");
+		for(int i = 0; i < respuesta.size(); i++)
+		{	
+			System.out.print("{ ");
+			for(int j = 0; j < respuesta.get(i).size(); j++) System.out.print(respuesta.get(i).get(j) + " ");
+			System.out.print("} ");
 		}
+		System.out.print("}\n");
 	}
 	
 	
-	public static void BFS()
+	public static ArrayList < ArrayList <Integer> > BFS(ArrayList < ArrayList <Integer> > grafo)
 	{
+		ArrayList < ArrayList <Integer> > respuesta = new ArrayList< ArrayList <Integer> >();
+		Queue<Integer> q = new LinkedList<>();
+		Set<Integer> unvisited = new HashSet<Integer>(); 
+		for(int k = 0; k < grafo.size(); k++)
+		{
+			unvisited.add(k);
+		}
+		int n = grafo.size();
 		
+		
+		for(int k = 0; k < n; k++)
+		{
+			if(unvisited.contains(k))
+			{
+				ArrayList <Integer> v = new ArrayList<Integer>();
+				q.add(k);
+				unvisited.remove(k);
+				//System.out.println("añado" + k);
+				while(! q.isEmpty() )
+				{
+					//System.out.println(unvisited.size() );
+					int i = q.remove();
+					//System.out.println("borro" + i);
+					v.add(i);
+					for(int j = 0; j < n; j++)
+					{
+						if( grafo.get(i).get(j) > 0)
+						{
+							if(unvisited.contains(j))
+							{
+								//System.out.println("añado" + j);
+								q.add(j);
+								unvisited.remove(j);
+							}
+						}
+					}
+				}
+				respuesta.add(v);
+			}
+		}
+		return respuesta;
 	}
 	
 	
